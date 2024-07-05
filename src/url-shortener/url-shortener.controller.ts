@@ -25,9 +25,12 @@ export class UrlShortenerController {
     description: 'The URL has been successfully shortened.',
     type: ShortUrlResponseDto,
   })
-  shortenUrl(@Body() shortenUrlDto: ShortenUrlDto): ShortUrlResponseDto {
-    const id = this.urlShortenerService.shortenUrl(shortenUrlDto.url);
-    const shortUrl = `${process.env.BASE_URL}/${id}`;
+  async shortenUrl(
+    @Body() shortenUrlDto: ShortenUrlDto,
+  ): Promise<ShortUrlResponseDto> {
+    const shortUrl = await this.urlShortenerService.shortenUrl(
+      shortenUrlDto.url,
+    );
     return { shortUrl };
   }
 
@@ -35,8 +38,11 @@ export class UrlShortenerController {
   @ApiOperation({ summary: 'Redirect to the original URL' })
   @ApiResponse({ status: 302, description: 'Redirection to the original URL.' })
   @ApiResponse({ status: 404, description: 'URL not found.' })
-  redirectToUrl(@Param('id') id: string, @Res() res: Response): void {
-    const originalUrl = this.urlShortenerService.getOriginalUrl(id);
+  async redirectToUrl(
+    @Param('id') id: string,
+    @Res() res: Response,
+  ): Promise<void> {
+    const originalUrl = await this.urlShortenerService.getOriginalUrl(id);
     if (originalUrl) {
       res.redirect(originalUrl);
     } else {
