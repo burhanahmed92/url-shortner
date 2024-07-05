@@ -23,7 +23,9 @@ export class UrlShortenerService {
       await this.urlRepository.save(url);
       return shortUrl;
     } catch (error) {
-      throw new InternalServerErrorException('Error while shortening URL');
+      throw new InternalServerErrorException(
+        'Error while shortening URL' + error,
+      );
     }
   }
 
